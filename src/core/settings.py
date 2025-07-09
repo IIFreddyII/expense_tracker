@@ -2,6 +2,7 @@
 Django settings for core project.
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -80,6 +81,13 @@ TEMPLATES = [
     },
 ]
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=21),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
 WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
@@ -116,7 +124,6 @@ REST_FRAMEWORK = {
     # Date Time Formats
     "DATE_FORMAT": "%d/%m/%Y",
     "DATE_INPUT_FORMATS": ["iso-8601", "%d/%m/%Y", "%d-%m-%Y"],
-    "EXCEPTION_HANDLER": "base.exceptions.custom_exception_handler",
 }
 
 # Internationalization

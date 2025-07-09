@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     # Project
+    'apps.accounts',
     'apps.finance',
 ]
 

@@ -1,0 +1,17 @@
+# Django base stuff
+Django==5.2.4
+django-admin-env-notice==1.0.1
+
+# Environ
+django-environ==0.12.0
+
+# Django tools
+django-filter==25.1
+
+# DRF
+djangorestframework==3.16.0
+djangorestframework_simplejwt==5.5.0
+django-cors-headers==4.7.0
+
+# BD
+psycopg2-binary==2.9.10

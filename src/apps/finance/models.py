@@ -42,5 +42,14 @@ class Transaction(BaseModel):
         verbose_name_plural = 'transactions'
         ordering = ['-created_at']
 
+    def save(self, *args, **kwargs):
+        """
+        Overrides the save method to convert the description to uppercase.
+        """
+
+        if self.description:
+            self.description = self.description.upper()
+        super(Transaction, self).save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.description} - {self.amount}"

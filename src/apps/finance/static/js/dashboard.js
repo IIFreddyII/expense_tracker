@@ -63,6 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
             totalIncomesEl.textContent = formatCurrency(incomesData.total_incomes);
             totalExpensesEl.textContent = formatCurrency(expensesData.total_expenses);
 
+            financeChart.update(incomesData.total_incomes, expensesData.total_expenses)
+
         } catch (error) {
             console.error('Error en updateTotals:', error);
             totalIncomesEl.textContent = 'Error';
@@ -84,8 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 method: "GET",
                 headers: {"Authorization": `Bearer ${token}`},
             });
-
-            if (response.status === 401) {
+            console.log(response.status)
+            if (response.status === 401 || response.status === 404) {
                 window.location.href = "";
                 return;
             }

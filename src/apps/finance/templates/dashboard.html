@@ -3,7 +3,6 @@
 
 {% block content %}
 
-{# ... (el botón y el modal se quedan igual) ... #}
 <button id="open-modal-btn">Registrar Nueva Transacción</button>
 
 <div id="transaction-modal" class="modal">
@@ -13,7 +12,7 @@
         <form id="transaction-form">
             <div>
                 <label for="description">Descripción:</label>
-                <input type="text" id="description" name="description" required>
+                <input type="text" id="description" name="description" required style="text-transform: uppercase;">
             </div>
             <div>
                 <label for="amount">Monto:</label>
@@ -36,18 +35,27 @@
 <p id="form-error" class="error-message"></p>
 
 <div class="transaction-container">
-    <h2>Ingresos</h2>
+    <div class="chart-container"
+         style="position: relative;">
+        <canvas id="transactionChart"></canvas>
+    </div>
+</div>
+
+<div class="transaction-container">
+    <h3>Ingresos</h3>
     <h4 id="total-incomes" class="total-display total-incomes">Cargando...</h4>
     <div id="income-list">
     </div>
 </div>
 
 <div class="transaction-container">
-    <h2>Gastos</h2>
+    <h3>Gastos</h3>
     <h4 id="total-expenses" class="total-display total-expenses">Cargando...</h4>
     <div id="expense-list">
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/finance-chart.js' %}"></script>
 <script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}

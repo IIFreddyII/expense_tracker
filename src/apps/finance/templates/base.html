@@ -1,5 +1,4 @@
 {% load static %}
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +8,11 @@
 <body>
 <header>
     <h1>Mi Seguimiento Financiero</h1>
+    <nav style="padding: 10px">
+        {% if user.is_authenticated %}
+        <span>Hola, {{ user.username }}</span>
+        {% endif %}
+    </nav>
 </header>
 
 <main>

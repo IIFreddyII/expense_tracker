@@ -117,8 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
             expenseContainer.innerHTML = "<p>Error inesperado.</p>";
         }
     }
-
-
+    
     // Obtener los elementos del DOM que necesitamos
     const modal = document.getElementById('transaction-modal');
     const openModalBtn = document.getElementById('open-modal-btn');

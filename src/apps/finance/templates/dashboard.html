@@ -2,23 +2,13 @@
 {% load static %}
 
 {% block content %}
-<!-- Agrega este botón donde quieras que aparezca el disparador del modal -->
+
 <button id="open-modal-btn">Registrar Nueva Transacción</button>
 
-<!--
-  ESTRUCTURA DEL MODAL
-  (Esto puede ir al final de tu <body>)
--->
 <div id="transaction-modal" class="modal">
-    <!-- Contenido del Modal -->
     <div class="modal-content">
         <span class="close-button">&times;</span>
         <h2>Nueva Transacción</h2>
-
-        <!--
-          Aquí dentro va tu formulario.
-          He movido el <form id="transaction-form"> aquí.
-        -->
         <form id="transaction-form">
             <div>
                 <label for="description">Descripción:</label>

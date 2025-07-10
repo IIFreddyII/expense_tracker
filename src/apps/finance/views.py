@@ -1,6 +1,6 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
-from django.shortcuts import render
+from django.views.generic import TemplateView
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -70,6 +70,5 @@ class TransactionViewSet(ModelViewSet):
         return Response({'total_incomes': total})
 
 
-@login_required
-def dashboard(request):
-    return render(request, 'dashboard.html')
+class DashboardView(LoginRequiredMixin, TemplateView):
+    template_name = 'dashboard.html'

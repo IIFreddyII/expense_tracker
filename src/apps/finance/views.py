@@ -35,36 +35,37 @@ class TransactionViewSet(ModelViewSet):
     def get_queryset(self):
         return Transaction.objects.filter(user=self.request.user)
 
+    def _get_total_by_type(self, transaction_type: str) -> float:
+        """
+        Helper method to calculate the total amount for a given transaction type.
+        """
+
+        # Get transactions for the user and filter by the specified type.
+        transactions = self.get_queryset().filter(type=transaction_type)
+
+        # Aggregate the sum of the 'amount' field.
+        total = transactions.aggregate(total=Sum('amount'))['total']
+
+        # Return the total, or 0 if the total is None (no transactions found).
+        return total or 0
+
     @action(detail=False, methods=['get'], url_path='total-expenses')
     def total_expenses(self, request):
         """
-        A custom action to calculate the sum of all 'expense' transactions
-        for the authenticated user.
+        Calculates and returns the total expenses for the authenticated user.
         """
 
-        user_transactions = self.get_queryset()
-        user_expenses = user_transactions.filter(type='expense')
-
-        total = user_expenses.aggregate(total_amount=Sum('amount'))['total_amount']
-
-        if total is None:
-            total = 0
+        total = self._get_total_by_type('expense')
 
         return Response({'total_expenses': total})
 
     @action(detail=False, methods=['get'], url_path='total-incomes')
     def total_incomes(self, request):
         """
-        A custom action to calculate the sum of all 'income' transactions
-        for the authenticated user.
+        Calculates and returns the total income for the authenticated user.
         """
-        user_transactions = self.get_queryset()
-        user_incomes = user_transactions.filter(type='income')
 
-        total = user_incomes.aggregate(total_amount=Sum('amount'))['total_amount']
-
-        if total is None:
-            total = 0
+        total = self._get_total_by_type('incomes')
 
         return Response({'total_incomes': total})
 

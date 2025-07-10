@@ -8,9 +8,17 @@
 <body>
 <header>
     <h1>Mi Seguimiento Financiero</h1>
-    <nav style="padding: 10px">
+    <nav>
         {% if user.is_authenticated %}
         <span>Hola, {{ user.username }}</span>
+
+        <form action="{% url 'logout' %}" method="post" style="display: inline; margin-left: 15px;">
+            {% csrf_token %}
+            <button type="submit" class="logout-button">Cerrar Sesión</button>
+        </form>
+
+        {% else %}
+        <a href="{% url 'login' %}">Iniciar Sesión</a>
         {% endif %}
     </nav>
 </header>

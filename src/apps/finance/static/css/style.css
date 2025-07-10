@@ -21,6 +21,24 @@ header {
     border-radius: 8px;
 }
 
+header nav {
+    padding: 10px;
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    vertical-align: baseline;
+}
+
+.logout-button:hover {
+    color: #0056b3;
+}
+
 h2 {
     margin-bottom: 20px;
 }

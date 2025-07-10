@@ -1,0 +1,347 @@
+/* Reset & basics */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    padding: 20px;
+    color: #333;
+}
+
+header {
+    background-color: #343a40;
+    padding: 1rem;
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+    border-radius: 8px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+
+/* Estilos generales para los contenedores de transacciones */
+.transaction-container {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Títulos de las secciones (Ingresos/Gastos) */
+.transaction-container h2 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* Estilo base para cada transacción */
+#income-list p,
+#expense-list p {
+    padding: 12px 15px;
+    margin: 8px 0;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: monospace;
+    font-size: 1rem;
+    border-left-width: 5px;
+    border-left-style: solid;
+}
+
+/* Estilo específico para INGRESOS */
+p.income {
+    background-color: #e8f5e9; /* Verde claro */
+    border-left-color: #4caf50; /* Verde */
+    color: #2e7d32;
+}
+
+/* Estilo específico para GASTOS */
+p.expense {
+    background-color: #ffebee; /* Rojo claro */
+    border-left-color: #f44336; /* Rojo */
+    color: #c62828;
+}
+
+/* Mensajes cuando no hay transacciones */
+#income-list p:only-child,
+#expense-list p:only-child {
+    border-left: none;
+    background-color: transparent;
+    color: #777;
+    justify-content: center;
+}
+
+
+/* --- Estilos opcionales para el formulario --- */
+#transaction-form {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+#transaction-form div {
+    display: flex;
+    flex-direction: column;
+}
+
+#transaction-form input,
+#transaction-form select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+#transaction-form input:focus,
+#transaction-form select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+#transaction-form button {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#transaction-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para el contenedor de filtros */
+.filters {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se ajusten en pantallas pequeñas */
+    align-items: center;
+    gap: 15px; /* Espacio entre los elementos del filtro */
+    padding: 15px;
+    margin-bottom: 25px;
+    background-color: #f9f9f9; /* Un fondo sutil para destacar la sección */
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    justify-content: center;
+}
+
+/* Estilos para las etiquetas (labels) */
+.filters label {
+    font-weight: bold;
+    color: #333;
+    margin-right: 5px;
+}
+
+/* Estilos para los campos de fecha */
+.filters input[type="date"] {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #555;
+    outline: none; /* Quita el borde azul al hacer clic */
+    transition: border-color 0.3s;
+}
+
+/* Efecto visual al enfocar el campo de fecha */
+.filters input[type="date"]:focus {
+    border-color: #007bff; /* Un color de realce */
+}
+
+/* Estilos para los botones dentro del contenedor de filtros */
+.filters button {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+/* Estilo específico para el botón de "Filtrar" */
+#filter-button {
+    background-color: #007bff; /* Azul primario */
+    color: white;
+}
+
+#filter-button:hover {
+    background-color: #0056b3; /* Un azul más oscuro al pasar el ratón */
+}
+
+/* Estilo específico para el botón de "Limpiar Filtro" */
+#reset-filter-button {
+    background-color: #6c757d; /* Gris secundario */
+    color: white;
+}
+
+#reset-filter-button:hover {
+    background-color: #5a6268;
+}
+
+/* Efecto de clic en los botones */
+.filters button:active {
+    transform: scale(0.98);
+}
+
+/* --- Estilos para el Modal de Transacciones --- */
+
+/* Botón para abrir el modal */
+#open-modal-btn {
+    padding: 12px 25px;
+    background-color: #28a745; /* Verde para "agregar" */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    display: block; /* Ocupa su propia línea */
+    margin: 0 auto 30px auto; /* Centrado y con margen inferior */
+}
+
+#open-modal-btn:hover {
+    background-color: #218838;
+}
+
+/* El contenedor del modal (fondo oscuro) */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Se queda fijo en la pantalla */
+    z-index: 1000; /* Por encima de todo lo demás */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Permite scroll si el contenido es grande */
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo negro semitransparente */
+}
+
+/* La caja blanca del modal */
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto; /* 10% desde arriba y centrado horizontalmente */
+    padding: 25px 30px;
+    border: 1px solid #ddd;
+    width: 90%;
+    max-width: 550px; /* Ancho máximo para pantallas grandes */
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: animatetop 0.4s; /* Animación de entrada */
+}
+
+/* Animación para que el modal aparezca desde arriba */
+@keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0
+    }
+    to {
+        top: 0;
+        opacity: 1
+    }
+}
+
+/* El botón para cerrar (la 'x') */
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #333;
+    text-decoration: none;
+}
+
+/* Título dentro del modal */
+.modal-content h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+
+/* --- AJUSTES AL FORMULARIO PARA EL MODAL --- */
+#transaction-form {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se ajusten en varias líneas */
+    gap: 20px;
+    /* Se eliminan background, padding, border, etc. porque ahora los tiene .modal-content */
+}
+
+#transaction-form div {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 200px; /* Permite que los campos crezcan y se ajusten */
+    gap: 5px;
+}
+
+#transaction-form label {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+#transaction-form input,
+#transaction-form select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%; /* Ocupan todo el ancho de su contenedor 'div' */
+}
+
+#transaction-form input:focus,
+#transaction-form select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+#transaction-form button {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    flex-basis: 100%; /* El botón ocupa todo el ancho en una nueva línea */
+    margin-top: 10px; /* Espacio sobre el botón */
+}
+
+#transaction-form button:hover {
+    background-color: #218838;
+}

@@ -62,7 +62,7 @@ purposes.
 ### Installation & Setup
 
 1. **Clone the repository**
-    - git clone https://github.com/your-username/expense_tracker.git
+    - git clone https://github.com/IIFreddyII/expense_tracker.git
     - cd expense_tracker
 2. **Create and activate a virtual environment**
     - (`python -m venv venv`)

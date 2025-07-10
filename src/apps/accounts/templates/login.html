@@ -1,0 +1,25 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+<div class="login-container">
+    <h1 class="login-title">Bienvenido</h1>
+    <br>
+    <img src="https://colorlib.com/etc/lf/Login_v6/images/avatar-01.jpg" alt="Avatar">
+    <br>
+    <form id="login-form">
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+    <br>
+    <p id="error" class="error-message"></p>
+</div>
+
+<script src="{% static 'js/login.js' %}"></script>
+</body>
+</html>

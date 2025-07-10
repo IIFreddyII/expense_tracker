@@ -1,20 +1,129 @@
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("access");
 
-
     if (!token) {
         window.location.href = "";
         return;
     }
 
     const form = document.getElementById("transaction-form");
-    const container = document.getElementById("transaction-list");
+    const incomeContainer = document.getElementById("income-list");
+    const expenseContainer = document.getElementById("expense-list");
+    const totalIncomesEl = document.getElementById('total-incomes');
+    const totalExpensesEl = document.getElementById('total-expenses');
+    const modal = document.getElementById('transaction-modal');
+    const openModalBtn = document.getElementById('open-modal-btn');
+    const closeModalBtn = document.querySelector('.close-button');
 
-    // get user info
-    const user_id = localStorage.getItem("user")
 
-    // Load existing transactions on page load
-    loadTransactions();
+    /**
+     * Formatea un número a una cadena de moneda (ej. $1,234.56).
+     * @param {number} amount - La cantidad a formatear.
+     * @returns {string} La cantidad formateada como moneda.
+     */
+    const formatCurrency = (amount) => {
+        const numberAmount = Number(amount) || 0;
+        return new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN'
+        }).format(numberAmount);
+    };
+
+
+    /**
+     * Obtiene los totales de ingresos y gastos desde la API y actualiza el DOM.
+     */
+    async function updateTotals() {
+        totalIncomesEl.textContent = 'Cargando...';
+        totalExpensesEl.textContent = 'Cargando...';
+
+        const headers = {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        };
+
+        try {
+            const [incomesRes, expensesRes] = await Promise.all([
+                fetch('/api/v1/transactions/total-incomes/', {headers}),
+                fetch('/api/v1/transactions/total-expenses/', {headers})
+            ]);
+
+            if (incomesRes.status === 401 || expensesRes.status === 401) {
+                window.location.href = "";
+                return;
+            }
+
+            if (!incomesRes.ok || !expensesRes.ok) {
+                throw new Error('No se pudieron obtener los totales.');
+            }
+
+            const incomesData = await incomesRes.json();
+            const expensesData = await expensesRes.json();
+
+            totalIncomesEl.textContent = formatCurrency(incomesData.total_incomes);
+            totalExpensesEl.textContent = formatCurrency(expensesData.total_expenses);
+
+        } catch (error) {
+            console.error('Error en updateTotals:', error);
+            totalIncomesEl.textContent = 'Error';
+            totalExpensesEl.textContent = 'Error';
+        }
+    }
+
+    /**
+     * Carga la lista de transacciones (ingresos y gastos) y las muestra en el DOM.
+     */
+    async function loadTransactions() {
+        if (!incomeContainer || !expenseContainer) {
+            console.error("Contenedores de lista no encontrados.");
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/v1/transactions/", {
+                method: "GET",
+                headers: {"Authorization": `Bearer ${token}`},
+            });
+
+            if (response.status === 401) {
+                window.location.href = "";
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("Fallo al cargar las transacciones.");
+            }
+
+            const data = await response.json();
+            const results = data.results || [];
+
+            const incomes = results.filter(tx => tx.type === 'income');
+            const expenses = results.filter(tx => tx.type === 'expense');
+
+            incomeContainer.innerHTML = incomes.length === 0
+                ? "<p>No se encontraron ingresos.</p>"
+                : incomes.map(tx => `
+                    <p class="${tx.type}">
+                        <span>${new Date(tx.date).toLocaleDateString('es-MX')} - ${tx.description}</span>
+                        <span>${formatCurrency(tx.amount)}</span>
+                    </p>
+                `).join('');
+
+            expenseContainer.innerHTML = expenses.length === 0
+                ? "<p>No se encontraron gastos.</p>"
+                : expenses.map(tx => `
+                    <p class="${tx.type}">
+                        <span>${new Date(tx.date).toLocaleDateString('es-MX')} - ${tx.description}</span>
+                        <span>${formatCurrency(tx.amount)}</span>
+                    </p>
+                `).join('');
+
+        } catch (error) {
+            console.error("Error al cargar transacciones:", error);
+            incomeContainer.innerHTML = `<p>${error.message}</p>`;
+            expenseContainer.innerHTML = "";
+        }
+    }
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -22,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const formData = new FormData(form);
         const payload = Object.fromEntries(formData.entries());
 
-        // Parse user info and add the ID to the payload
+        const user_id = localStorage.getItem("user")
 
         if (user_id) {
             payload.user = user_id;
@@ -40,122 +149,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok) {
                 form.reset();
-                loadTransactions();
+                closeModal();         // Cierra el modal
+                loadTransactions();   // Recarga la lista de transacciones
+                updateTotals();       // ¡Actualiza los totales!
             } else if (response.status === 401) {
-                window.location.href = "";
+                window.location.href = "/login/";
             } else {
-                alert("Failed to save transaction.");
+                const errorData = await response.json();
+                console.error("Error al guardar:", errorData);
+                alert("Fallo al guardar la transacción. Revisa los datos.");
             }
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error de red:", error);
         }
     });
 
-
-    async function loadTransactions() {
-        // Asegúrate de que tu HTML tenga elementos con estos IDs
-        const incomeContainer = document.getElementById("income-list");
-        const expenseContainer = document.getElementById("expense-list");
-
-        // Si los contenedores no existen, muestra un error en la consola y detiene la ejecución.
-        if (!incomeContainer || !expenseContainer) {
-            console.error("Por favor, añade elementos con los IDs 'income-list' y 'expense-list' a tu HTML.");
-            return;
-        }
-
-        try {
-            const response = await fetch("/api/v1/transactions/", {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                const results = data.results || [];
-
-                // Filtramos las transacciones en dos arrays: ingresos y gastos.
-                // Asumo que los tipos son 'income' y 'expense'. Ajústalo si usan otros valores.
-                const incomes = results.filter(tx => tx.type === 'income');
-                const expenses = results.filter(tx => tx.type === 'expense');
-
-                // Renderizar la lista de ingresos
-                if (incomes.length === 0) {
-                    incomeContainer.innerHTML = "<p>No se encontraron ingresos.</p>";
-                } else {
-                    // Usamos map y join para generar el HTML de forma más eficiente
-                    const incomeHTML = incomes.map(tx => `
-                    <p class="${tx.type}">
-                      ${tx.date} — ${tx.description} — $${tx.amount}
-                    </p>
-                `).join('');
-                    incomeContainer.innerHTML = incomeHTML;
-                }
-
-                // Renderizar la lista de gastos
-                if (expenses.length === 0) {
-                    expenseContainer.innerHTML = "<p>No se encontraron gastos.</p>";
-                } else {
-                    const expenseHTML = expenses.map(tx => `
-                    <p class="${tx.type}">
-                      ${tx.date} — ${tx.description} — $${tx.amount}
-                    </p>
-                `).join('');
-                    expenseContainer.innerHTML = expenseHTML;
-                }
-
-            } else if (response.status === 401) {
-                window.location.href = "";
-            } else {
-                incomeContainer.innerHTML = ""; // Limpiar en caso de error
-                expenseContainer.innerHTML = "<p>Fallo al cargar las transacciones.</p>";
-            }
-        } catch (error) {
-            console.error("Error al cargar las transacciones:", error);
-            incomeContainer.innerHTML = ""; // Limpiar en caso de error
-            expenseContainer.innerHTML = "<p>Error inesperado.</p>";
-        }
-    }
-    
-    // Obtener los elementos del DOM que necesitamos
-    const modal = document.getElementById('transaction-modal');
-    const openModalBtn = document.getElementById('open-modal-btn');
-    const closeModalBtn = document.querySelector('.close-button');
-
-    // Función para abrir el modal
     function openModal() {
         modal.style.display = 'block';
     }
 
-    // Función para cerrar el modal
     function closeModal() {
         modal.style.display = 'none';
     }
 
-    // --- ASIGNAR EVENTOS ---
+    if (openModalBtn) openModalBtn.addEventListener('click', openModal);
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
 
-    // 1. Abrir el modal al hacer clic en el botón "Registrar"
-    if (openModalBtn) {
-        openModalBtn.addEventListener('click', openModal);
-    }
-
-    // 2. Cerrar el modal al hacer clic en la 'x'
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', closeModal);
-    }
-
-    // 3. Cerrar el modal si el usuario hace clic fuera de la caja de contenido
-    window.addEventListener('click', function (event) {
-        if (event.target == modal) {
-            closeModal();
-        }
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) closeModal();
     });
 
-    // 4. (Opcional) Cerrar el modal con la tecla 'Escape'
-    window.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && modal.style.display === 'block') {
-            closeModal();
-        }
+    window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && modal.style.display === 'block') closeModal();
     });
+
+    loadTransactions();
+    updateTotals();
 });

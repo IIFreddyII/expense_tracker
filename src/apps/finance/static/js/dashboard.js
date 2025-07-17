@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? "<p>No se encontraron ingresos.</p>"
                 : incomes.map(tx => `
                     <p class="${tx.type}">
-                        <span>${new Date(tx.date).toLocaleDateString('es-MX')} - ${tx.description}</span>
+                        <span>${tx.date} - ${tx.description}</span>
                         <span>${formatCurrency(tx.amount)}</span>
                     </p>
                 `).join('');
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? "<p>No se encontraron gastos.</p>"
                 : expenses.map(tx => `
                     <p class="${tx.type}">
-                        <span>${new Date(tx.date).toLocaleDateString('es-MX')} - ${tx.description}</span>
+                        <span>${tx.date} - ${tx.description}</span>
                         <span>${formatCurrency(tx.amount)}</span>
                     </p>
                 `).join('');
